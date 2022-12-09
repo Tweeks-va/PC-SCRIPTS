@@ -24,11 +24,11 @@
 
 ## BLOCK CMDs
 netsh advfirewall firewall delete rule name="Web-TCP-80-443" dir=out
-netsh advfirewall firewall add rule name="Web-TCP-80-443" dir=out remoteport=80,443 action=block enable=yes
+netsh advfirewall firewall add rule name="Web-TCP-80-443" dir=out  protocol=TCP remoteport=80,443 action=block enable=yes
 
 ## ALLOW CMDs
 netsh advfirewall firewall delete rule name="Web-TCP-80-443" dir=out
-netsh advfirewall firewall add rule name="Web-TCP-80-443" dir=out remoteport=80,443 action=allow enable=yes
+netsh advfirewall firewall add rule name="Web-TCP-80-443" dir=out  protocol=TCP remoteport=80,443 action=allow enable=yes
 
 ## Full firewall config export (binary.. not that useful except for backups)
 netsh advfirewall export FILE.wfw
