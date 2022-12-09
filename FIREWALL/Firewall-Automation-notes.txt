@@ -1,0 +1,62 @@
+Methods for Scripting Windows Defender Firewall Rule Changes
+=================================================================
+			2022-12-09 tweeks-homework@theweeks.org
+
+## NOTES:
+## ================
+## Five Ways for scripting firewall rules - https://www.youtube.com/watch?v=KpxGzWN80mU
+##	https://youtu.be/KpxGzWN80mU?t=94
+##
+## 40 useful Windows commands you need to know
+## 	https://www.youtube.com/watch?v=Jfvg3CS1X3A
+##
+## Great Article on netsh/firewall hacking
+##	https://www.hackingarticles.in/windows-firewall-post-exploitation-with-netsh/
+
+
+## NETSH METHOD
+## ======================
+## Netsh is a better method than reg-hacks. Registry changes do not apply until reboot or when system is
+## forced to reload the netfilter tables.  For using the netsh method below, if you're adding a new rule
+## (never previously used), then simply add it.  If adding a rule that may already exist by the same name, 
+## be sure to delete it before adding the new rule version, or just delete first just to be sure (or you'll 
+## end up with duplicate/conflicting rules).
+
+## BLOCK CMDs
+netsh advfirewall firewall delete rule name="Web-TCP-80-443" dir=out
+netsh advfirewall firewall add rule name="Web-TCP-80-443" dir=out remoteport=80,443 action=block enable=yes
+
+## ALLOW CMDs
+netsh advfirewall firewall delete rule name="Web-TCP-80-443" dir=out
+netsh advfirewall firewall add rule name="Web-TCP-80-443" dir=out remoteport=80,443 action=allow enable=yes
+
+## Full firewall config export (binary.. not that useful except for backups)
+netsh advfirewall export FILE.wfw
+netsh advfirewall import FILE.wfw
+
+
+
+## FIREWALL RULE CHANGE AUTOMATION
+## ================================
+## - Create desired netsh script (above), being sure to delete old rules before adding new block (see .bat files)
+## - Create (or import) scheduled task to block or allow 80+443 out (see Web-Block.xml file(s))
+
+
+
+## REGISTRY METHOD:
+## ============================
+## Export - Note.. it works, but not until Windows firewall re-loads (activates) changes or reboots. 
+## The netsh method works better, but this is okay.
+## - Make initial rule entry via the advanced firewall UI, so it gets a valid windows GUID ID.
+## - Then export the full firewall rule listing
+reg export Computer\HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\SharedAccess\Parameters\FirewallPolicy\FirewallRules
+## - Edit down the reg export to only include the rule you want.
+## - Import from CMD or batch file (suggest reboot)
+reg import Web_TCP-80-443_BLOCK.reg
+
+
+
+
+
+
+
